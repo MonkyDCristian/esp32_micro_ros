@@ -1,7 +1,7 @@
 # ESP32_MICRO_ROS
 
 ## Description
-Multipurpose University Robot Unit, or MURU, is an educational robotic unit developed for university teaching.This documentation contains the software and hardware dependencies of the robot, along with the mechanical, electronic, and software system design of the document.
+Repository to learn to use plataformio_microros with the ESP32 DEV KIT miccrocontorller.
 
 ## Dependencies
 ### Software
