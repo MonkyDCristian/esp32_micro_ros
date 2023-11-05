@@ -32,17 +32,10 @@ install the repository as a platformIO project:
 * [Getting started micro-ROS](https://docs.vulcanexus.org/en/humble/rst/microros_documentation/getting_started/getting_started.html)
 
 One you are ready with the turorials checks the examples:
-* [Publishertion, subcriber and timer](https://github.com/muru-project/muru_kit/tree/main/src/examples/pub_sub_timer)
-* [Motor control by subcriber](https://github.com/muru-project/muru_kit/tree/main/src/examples/sub_motor)
-* [Encoder publisher](https://github.com/muru-project/muru_kit/tree/main/src/examples/pub_encoder)
-* [bluetooth serial connection](https://github.com/muru-project/muru_kit/tree/main/src/examples/bluetooth)
-* [encoder, Motor and bluetooth](https://github.com/muru-project/muru_kit/tree/main/src/examples/enc_motor_blue)
-
-One you are ready with the turorials checks the examples:
-* [Publishertion, subcriber and timer](https://github.com/muru-project/muru_kit/tree/main/src/examples/pub_sub_timer)
-* [Motor control by subcriber](https://github.com/muru-project/muru_kit/tree/main/src/examples/sub_motor)
-* [Encoder publisher](https://github.com/muru-project/muru_kit/tree/main/src/examples/pub_encoder)
-* [bluetooth serial connection](https://github.com/muru-project/muru_kit/tree/main/src/examples/bluetooth)
+* [Publisher, subscriber and timer](/src/examples/pub_sub_timer)
+* [Publisher, subscriber and timer with wifi](/src/examples/pub_sub_timer)
+* [Motor control by subscriber](/src/examples/sub_motor)
+* [Encoder publisher](/src/examples/pub_encoder)
 
 # Demo
 Go to your platformio.ini file to set the build_src_filter:
