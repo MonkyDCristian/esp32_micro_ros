@@ -22,7 +22,7 @@ Repository to learn to use plataformio_microros with the ESP32 DEV KIT miccrocon
 install the repository as a platformIO project:
 
 <p align="left">
-  <img width="380" height="230" src="/docs/git_clone_pio.png">
+  <img width="380" height="230" src="/docs/imgs/git_clone_pio.png">
 </p>
 
 ## Tutorials
