@@ -33,7 +33,7 @@ install the repository as a platformIO project:
 
 One you are ready with the turorials checks the examples:
 * [Publisher, subscriber and timer](/src/examples/pub_sub_timer)
-* [Publisher, subscriber and timer with wifi](/src/examples/pub_sub_timer)
+* [Publisher, subscriber and timer with wifi](/src/examples/pub_sub_timer_wifi)
 * [Motor control by subscriber](/src/examples/sub_motor)
 * [Encoder publisher](/src/examples/pub_encoder)
 
