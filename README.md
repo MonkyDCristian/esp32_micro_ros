@@ -29,7 +29,7 @@ install the repository as a platformIO project:
 * [Linux course for robotic](https://app.theconstructsim.com/courses/linux-for-robotics-40/)
 * [Basic C++ for robotic](https://app.theconstructsim.com/courses/59)
 * [Beginner ROS2 tutorials](https://docs.ros.org/en/humble/Tutorials/Beginner-CLI-Tools.html)
-* [Getting started micro-ROS](https://docs.vulcanexus.org/en/humble/rst/microros_documentation/getting_started/getting_started.html)
+* [Getting started micro-ROS](https://micro.ros.org/docs/tutorials/programming_rcl_rclc/overview/)
 
 One you are ready with the turorials checks the examples:
 * [Publisher, subscriber and timer](/src/examples/pub_sub_timer)
