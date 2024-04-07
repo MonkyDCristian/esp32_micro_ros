@@ -19,6 +19,9 @@ Repository to learn to use plataformio_microros with the ESP32 DEV KIT miccrocon
 * Microcontroller: [ESP32 DEV KIT](https://www.espressif.com/en/products/devkits/esp32-devkitc)
 
 ## Install
+```
+sudo apt-get install python3-venv
+```
 install the repository as a platformIO project:
 
 <p align="left">
