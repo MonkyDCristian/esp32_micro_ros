@@ -51,6 +51,10 @@ Find your serial [device name]:
 ```
 ls /dev/serial/by-id/*
 ```
+Add access to USB port
+```
+sudo chmod a+wr [device name]
+```
 Start micro_ros_agent:
 ```
 ros2 run micro_ros_agent micro_ros_agent serial --dev [device name]
