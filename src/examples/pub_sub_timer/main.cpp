@@ -34,7 +34,7 @@ reference:
 
 #include "variables.hpp"
 
-unsigned int num_handles = 2;   // 1 subscriber, 1 publisher
+unsigned int num_handles = 2;   // 1 subscriber, 1 publishercreate_entities
 
 void setup() {
   // turn the LED on (HIGH is the voltage level)
@@ -50,13 +50,13 @@ void setup() {
 }
 
 void loop() {
-  delay(10);
-  RCSOFTCHECK(rclc_executor_spin_some(&executor, RCL_MS_TO_NS(100)));
+  RCSOFTCHECK(rclc_executor_spin_some(&executor, RCL_MS_TO_NS(1)));
+  digitalWrite(LED_BUILTIN, (sub_msg.data == 0) ? LOW : HIGH); 
 }
 
 // ---- MICROROS SETUP -----
 void microros_setup() {
-  // Configure serial transport
+  // Configure serial transport, you can use Serial/1/2
   int bound_rate = 115200;
   const char *node_name = "micro_ros_platformio_node";
   const char *node_ns = ""; //namespace
@@ -72,6 +72,7 @@ void microros_setup() {
 }
 
 // ---- MICROROS PUB -----
+// define as many piublishers as you need
 void microros_add_pubs(){
   RCCHECK(rclc_publisher_init_default( // create publisher
     &publisher,
@@ -81,6 +82,7 @@ void microros_add_pubs(){
 }
 
 // ---- MICROROS SUB -----
+// define as many subscribers as you need
 void microros_add_subs(){
   RCCHECK(rclc_subscription_init_default( // create subscriber
     &subscriber, 
@@ -92,10 +94,10 @@ void microros_add_subs(){
 void sub_callback(const void * msgin){
   // Cast message pointer to expected type
   const std_msgs__msg__Int16 *msg = (const std_msgs__msg__Int16 *) msgin;
-  digitalWrite(LED_BUILTIN, (msg->data == 0) ? LOW : HIGH); 
+  sub_msg.data = msg->data;
 }
 
-// ---- MICROROS TIMERS -----
+// ---- M//RCSOFTCHECK(rclc_executor_spin(&executor));ICROROS TIMERS -----
 void microros_add_timers(){
   const unsigned int timer_timeout = 1000; // create timer
   RCCHECK(rclc_timer_init_default(

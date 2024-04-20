@@ -25,6 +25,20 @@ install the repository as a platformIO project:
   <img width="380" height="230" src="/docs/imgs/git_clone_pio.png">
 </p>
 
+*Note*: if the micro_ros_platformio doesn't install, comment any ROS pkg source in your .bashrc, like this:
+```
+# Setup ROS2
+#source /opt/ros/humble/setup.bash
+#source /opt/vulcanexus/humble/setup.bash
+```
+And delet the /.pio/libdeps/esp32doit-devkit-v1/micro_ros_platformio folder and restart the computer.
+
+<p align="left">
+  <img width="380" height="230" src="/docs/imgs/delet_microros.png">
+</p>
+
+Open the proyect with VSC again, the microros_ros_platformio should install correctly.
+
 ## Tutorials
 * [Linux course for robotic](https://app.theconstructsim.com/courses/linux-for-robotics-40/)
 * [Basic C++ for robotic](https://app.theconstructsim.com/courses/59)
@@ -58,9 +72,9 @@ rqt
 ```
 Turn down the LED low
 ```
-ros2 topic pub /micro_ros_subcriber std_msgs/msg/Int32 data:\ 0\
+ros2 topic pub /micro_ros_subscriber std_msgs/msg/Int16 data:\ 0\
 ```
 Turn down the LED high
 ```
-ros2 topic pub /micro_ros_subcriber std_msgs/msg/Int32 data:\ 1\
+ros2 topic pub /micro_ros_subscriber std_msgs/msg/Int16 data:\ 1\
 ```
