@@ -34,7 +34,7 @@ reference:
 
 #include "variables.hpp"
 
-unsigned int num_handles = 2;   // 1 subscriber, 1 publishercreate_entities
+unsigned int num_handles = 2;   // 1 subscriber, 1 timer
 
 void setup() {
   // turn the LED on (HIGH is the voltage level)
