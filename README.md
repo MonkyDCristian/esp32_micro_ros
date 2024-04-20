@@ -34,7 +34,7 @@ install the repository as a platformIO project:
 #source /opt/ros/humble/setup.bash
 #source /opt/vulcanexus/humble/setup.bash
 ```
-And delet the /.pio/libdeps/esp32doit-devkit-v1/micro_ros_platformio folder and restart the computer.
+Delet the /.pio/libdeps/esp32doit-devkit-v1/micro_ros_platformio folder and restart the computer.
 
 <p align="left">
   <img width="380" height="480" src="/docs/imgs/delet_microros.png">
