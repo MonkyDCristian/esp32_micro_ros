@@ -105,7 +105,7 @@ bool microros_create_entities()
 
   // ---- MICROROS TIMERS -----
 
-  const unsigned int timer_timeout = 1000; // create timer/ 1Hz
+  const unsigned int timer_timeout = 500; // create timer/ 2 Hz
   RCCHECK(rclc_timer_init_default(
     &timer,
     &support,
