@@ -19,6 +19,9 @@ Repository to learn to use plataformio_microros with the ESP32 DEV KIT miccrocon
 * Microcontroller: [ESP32 DEV KIT](https://www.espressif.com/en/products/devkits/esp32-devkitc)
 
 ## Install
+```
+sudo apt-get install python3-venv
+```
 install the repository as a platformIO project:
 
 <p align="left">
@@ -61,6 +64,10 @@ Now compile and upload the firmware.uf2 file to raspberry PI pico, use the one t
 Find your serial [device name]:
 ```
 ls /dev/serial/by-id/*
+```
+Add access to USB port
+```
+sudo chmod a+wr [device name]
 ```
 Start micro_ros_agent:
 ```
