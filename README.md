@@ -37,7 +37,7 @@ install the repository as a platformIO project:
 And delet the /.pio/libdeps/esp32doit-devkit-v1/micro_ros_platformio folder and restart the computer.
 
 <p align="left">
-  <img width="380" height="230" src="/docs/imgs/delet_microros.png">
+  <img width="380" height="480" src="/docs/imgs/delet_microros.png">
 </p>
 
 Open the proyect with VSC again, the microros_ros_platformio should install correctly.
