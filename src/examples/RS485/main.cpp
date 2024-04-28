@@ -3,11 +3,16 @@ This example is a combination of publisher, subscriber and timer running in the 
 microros node using micro_ros_platformio with raspberry PI and Arduino framework
 
 Steps:
+  Uninstall brltty for ubuntu computer connection
+    sudo apt remove brltty
+  
+  check USB ports
+    sudo dmesg | grep usb
+
 
   Edit build_src_filter in platformio.ini to build this example
-    build_src_filter = +<examples/pub_sub_timer/*> -<.git/> -<.svn/> 
-    board_microros_transport = wifi;
-    
+    build_src_filter = +<examples/RS485/*> -<.git/> -<.svn/> 
+  
   Compile and upload to ESP32
   
   Terminal1:
@@ -15,7 +20,7 @@ Steps:
     ls /dev/serial/by-id/*
     
     # Start micro_ros_agent:
-    ros2 run micro_ros_agent micro_ros_agent serial --dev [device name]
+    ros2 run micro_ros_agent micro_ros_agent serial --dev [device name] -b 19200
   
   Terminal2:
     # visualice msgs
@@ -23,10 +28,10 @@ Steps:
 
   Terminal3:
     # Turn down the LED low
-    ros2 topic pub /micro_ros_subcriber std_msgs/msg/Int16 data:\ 0\
+    ros2 topic pub /micro_ros_subcriber std_msgs/msg/Bool data:\ false\
   
     # Turn down the LED high
-    ros2 topic pub /micro_ros_subcriber std_msgs/msg/Int16 data:\ 1\
+    ros2 topic pub /micro_ros_subcriber std_msgs/msg/Bool data:\ true\
 reference:
   
   micro_ros_platformio: https://github.com/micro-ROS/micro_ros_platformio
@@ -35,7 +40,11 @@ reference:
 
 #include "variables.hpp"
 
-unsigned int num_handles = 2;   // 1 subscriber, 1 publisher
+unsigned int num_handles = 2;   // 1 subscriber, 1 timer
+
+int LED_UP = 0;
+int LED_DOWN = 1;
+int led_state = LED_UP;
 
 void setup() {
   // turn the LED on (HIGH is the voltage level)
@@ -46,29 +55,35 @@ void setup() {
   microros_setup();
   microros_add_pubs();
   microros_add_subs();
-  microros_add_timers();
   microros_add_executor();
+  pub_msg.data = 0;
 }
 
 void loop() {
-  delay(10);
-  RCSOFTCHECK(rclc_executor_spin_some(&executor, RCL_MS_TO_NS(100)));
+  if (Serial2.available() > 0) {
+    RCSOFTCHECK(rclc_executor_spin_some(&executor, RCL_MS_TO_NS(1)));
+    RCSOFTCHECK(rcl_publish(&publisher, &pub_msg, NULL));
+    pub_msg.data++;
+
+    if  (sub_msg.data) {
+      led_state = LED_UP;
+    }
+    else {
+      led_state = LED_DOWN;
+    }
+  }
+  digitalWrite(LED_BUILTIN, (led_state) ? LOW : HIGH); 
 }
 
 // ---- MICROROS SETUP -----
 void microros_setup() {
-  // Configure wifi transport
+  int bound_rate = 115200; //baud rate for RS485
   const char *node_name = "micro_ros_platformio_node";
   const char *node_ns = ""; //namespace
-  
-  IPAddress agent_ip(192, 168, 1, 113);
-  size_t agent_port = 8888;
 
-  char ssid[] = "SSID";
-  char psk[]= "password";
-
-  set_microros_wifi_transports(ssid, psk, agent_ip, agent_port);
-
+  // Do not use Serial (TX0, RX0)!! use SoftwareSerial if you need to use another UART port
+  Serial2.begin(bound_rate); 
+  set_microros_serial_transports(Serial2);
   delay(2000);
   
   allocator = rcl_get_default_allocator();
@@ -78,6 +93,7 @@ void microros_setup() {
 }
 
 // ---- MICROROS PUB -----
+// define as many piublishers as you need
 void microros_add_pubs(){
   RCCHECK(rclc_publisher_init_default( // create publisher
     &publisher,
@@ -87,44 +103,26 @@ void microros_add_pubs(){
 }
 
 // ---- MICROROS SUB -----
+// define as many subscribers as you need
 void microros_add_subs(){
   RCCHECK(rclc_subscription_init_default( // create subscriber
     &subscriber, 
     &node,
-    ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Int16), 
+    ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Bool), 
     "micro_ros_subscriber"));
 }
+
 
 void sub_callback(const void * msgin){
   // Cast message pointer to expected type
   const std_msgs__msg__Int16 *msg = (const std_msgs__msg__Int16 *) msgin;
-  digitalWrite(LED_BUILTIN, (msg->data == 0) ? LOW : HIGH); 
-}
-
-// ---- MICROROS TIMERS -----
-void microros_add_timers(){
-  const unsigned int timer_timeout = 1000; // create timer
-  RCCHECK(rclc_timer_init_default(
-    &timer,
-    &support,
-    RCL_MS_TO_NS(timer_timeout),
-    timer_callback));
-}
-
-void timer_callback(rcl_timer_t *timer, int64_t last_call_time) {
-  RCLC_UNUSED(last_call_time);
-  if (timer != NULL) {
-    RCSOFTCHECK(rcl_publish(&publisher, &pub_msg, NULL));
-    pub_msg.data++;
-  }
+  sub_msg.data = msg->data;
 }
 
 // ---- MICROROS EXECUTOR -----
 void microros_add_executor(){
   RCCHECK(rclc_executor_init(&executor, &support.context, num_handles, &allocator));
-  RCCHECK(rclc_executor_add_timer(&executor, &timer));
   RCCHECK(rclc_executor_add_subscription(&executor, &subscriber, &sub_msg, &sub_callback, ON_NEW_DATA));
-  pub_msg.data = 0;
 }
 
 // Error handle loop

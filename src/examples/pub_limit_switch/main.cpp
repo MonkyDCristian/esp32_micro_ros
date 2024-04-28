@@ -7,7 +7,7 @@ Steps:
   Edit build_src_filter in platformio.ini to build this example
     build_src_filter = +<examples/pub_limit_switch/*> -<.git/> -<.svn/> 
   
-  Compile and upload to raspberry PI, use the firmware.uf2 that is inside the .pio/build/pico/ folder
+  Compile and upload to ESP32
   
   Terminal1:
     # Find your serial [device name]:
@@ -21,7 +21,7 @@ Steps:
     ros2 topic echo /encoder_publisher
 
 reference:
-  load raspberry PI program: https://tutoduino.fr/en/pico-platformio/#google_vignette
+  
   micro_ros_platformio: https://github.com/micro-ROS/micro_ros_platformio
   micro_ros_agent: https://micro.ros.org/docs/tutorials/core/first_application_rtos/freertos/
 */

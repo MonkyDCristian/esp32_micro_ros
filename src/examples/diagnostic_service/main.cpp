@@ -1,13 +1,12 @@
 /*
-This example is a combination subscriber and a publisher running in the same 
-microros node using micro_ros_platformio with ESP32 and Arduino framework.
+This example is a microros service node that return the temperature of the ESP32.  
+This node use micro_ros_platformio with ESP32 and Arduino framework.
 
 Steps:
-
   Edit build_src_filter in platformio.ini to build this example
     build_src_filter = +<examples/chatter/*> -<.git/> -<.svn/> 
-  
-  Compile and upload to ESP32
+    
+  Compile and upload to ESP32.
   
   Terminal1:
     # Find your serial [device name]:
@@ -21,14 +20,15 @@ Steps:
     rqt 
 
   Terminal3:
-    # Turn down the LED low
-    ros2 topic pub /micro_ros_subcriber std_msgs/msg/Booñ data:\ false\
-  
-    # Turn down the LED high
-    ros2 topic pub /micro_ros_subcriber std_msgs/msg/Bool data:\ true\
+    # Call the service
+     ros2 service call /esp32_status std_srvs/srv/Trigger {}\
+    
 reference:
   micro_ros_platformio: https://github.com/micro-ROS/micro_ros_platformio
   micro_ros_agent: https://micro.ros.org/docs/tutorials/core/first_application_rtos/freertos/
+  micro-ROS service: https://micro.ros.org/docs/tutorials/programming_rcl_rclc/service/
+  micro-ROS String Utilities: https://docs.vulcanexus.org/en/iron/rst/microros_documentation/user_api/user_api_utilities.html
+  float to char *: https://community.platformio.org/t/convert-float-to-char-array/21484
 */
 
 #include "variables.hpp"
@@ -46,19 +46,15 @@ void setup() {
   delay(1000);
 
   microros_setup();
-  microros_add_pubs();
-  microros_add_subs();
+  microros_add_services();
   microros_add_executor();
-  pub_msg.data = 0;
 }
 
 void loop() {
   if (Serial.available() > 0) {
     RCSOFTCHECK(rclc_executor_spin_some(&executor, RCL_MS_TO_NS(1)));
-    RCSOFTCHECK(rcl_publish(&publisher, &pub_msg, NULL));
-    pub_msg.data++;
-
-    if  (sub_msg.data) {
+   
+    if  (led_state == LED_DOWN) {
       led_state = LED_UP;
     }
     else {
@@ -85,36 +81,39 @@ void microros_setup() {
   RCCHECK(rclc_node_init_default(&node, node_name, node_ns, &support)); // create node
 }
 
-// ---- MICROROS PUB -----
-// define as many piublishers as you need
-void microros_add_pubs(){
-  RCCHECK(rclc_publisher_init_default( // create publisher
-    &publisher,
-    &node,
-    ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Int16),
-    "micro_ros_publisher"));
+// ---- MICROROS SERVICES -----
+void microros_add_services(){
+  const char * service_name = "/esp32_status";
+  const rosidl_service_type_support_t * type_support = ROSIDL_GET_SRV_TYPE_SUPPORT(std_srvs, srv, Trigger);
+  RCCHECK(rclc_service_init_default(&service, &node, type_support, service_name));
 }
 
-// ---- MICROROS SUB -----
-// define as many subscribers as you need
-void microros_add_subs(){
-  RCCHECK(rclc_subscription_init_default( // create subscriber
-    &subscriber, 
-    &node,
-    ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Bool), 
-    "micro_ros_subscriber"));
-}
+void service_callback(const void * req_msg, void * res_msg){
+  // Cast messages to expected types
+  std_srvs__srv__Trigger_Request * req_in =(std_srvs__srv__Trigger_Request *) req_msg;
+  std_srvs__srv__Trigger_Response * res_out = (std_srvs__srv__Trigger_Response *) res_msg;
+  
+  // microros string message response
+  const char * str = "Temperature: ";
+  rosidl_runtime_c__String ros_str = micro_ros_string_utilities_init(str);
 
-void sub_callback(const void * msgin){
-  // Cast message pointer to expected type
-  const std_msgs__msg__Int16 *msg = (const std_msgs__msg__Int16 *) msgin;
-  sub_msg.data = msg->data;
+  String fabc(temperatureRead(), 2);
+  const char* t_str = fabc.c_str();
+ 
+  ros_str = micro_ros_string_utilities_append(ros_str, t_str);
+  ros_str = micro_ros_string_utilities_append(ros_str, "°C");
+  
+  response_msg.message.data = ros_str.data;
+
+  // Handle request message and set the response message values
+  res_out->success = true;
+  res_out->message.data = response_msg.message.data;
 }
 
 // ---- MICROROS EXECUTOR -----
 void microros_add_executor(){
   RCCHECK(rclc_executor_init(&executor, &support.context, num_handles, &allocator));
-  RCCHECK(rclc_executor_add_subscription(&executor, &subscriber, &sub_msg, &sub_callback, ON_NEW_DATA));
+  RCCHECK(rclc_executor_add_service(&executor, &service, &request_msg, &response_msg, service_callback));
 }
 
 // Error handle loop
