@@ -53,7 +53,7 @@ void setup() {
 
 void loop() {
   microros_loop();
-  digitalWrite(LED_BUILTIN, (sub_msg.data == 0) ? LOW : HIGH); 
+  digitalWrite(LED_BUILTIN, (sub_msg.data) ? HIGH : LOW); 
 }
 
 void sub_callback(const void * msgin){
@@ -95,7 +95,7 @@ bool microros_create_entities()
     ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Int16),
     "micro_ros_publisher"));
 
-// ---- MICROROS SUB ----- define as many subscribers as you need
+  // ---- MICROROS SUB ----- define as many subscribers as you need
   RCCHECK(rclc_subscription_init_default( // create subscriber
     &subscriber, 
     &node,
@@ -104,7 +104,6 @@ bool microros_create_entities()
 
 
   // ---- MICROROS TIMERS -----
-
   const unsigned int timer_timeout = 500; // create timer/ 2 Hz
   RCCHECK(rclc_timer_init_default(
     &timer,
@@ -112,19 +111,12 @@ bool microros_create_entities()
     RCL_MS_TO_NS(timer_timeout),
     timer_callback));
 
-
   // ---- MICROROS EXECUTOR ----- add all yours timers and subscribers
   executor = rclc_executor_get_zero_initialized_executor();
   RCCHECK(rclc_executor_init(&executor, &support.context, num_handles, &allocator));
   RCCHECK(rclc_executor_add_timer(&executor, &timer));
   RCCHECK(rclc_executor_add_subscription(&executor, &subscriber, &sub_msg, &sub_callback, ON_NEW_DATA));
 
-
-  // microros_setup();
-  // microros_add_pubs();
-  // microros_add_subs();
-  // microros_add_timers();
-  // microros_add_executor();
   return true;
 }
 
@@ -145,7 +137,7 @@ void microros_loop()
 {
   switch (state) {
     case WAITING_AGENT:
-      EXECUTE_EVERY_N_MS(500, state = (RMW_RET_OK == rmw_uros_ping_agent(100, 1)) ? AGENT_AVAILABLE : WAITING_AGENT;);
+      EXECUTE_EVERY_N_MS(500, state = (RMW_RET_OK == rmw_uros_ping_agent(100, 8)) ? AGENT_AVAILABLE : WAITING_AGENT;);
       break;
 
     case AGENT_AVAILABLE:
@@ -156,7 +148,7 @@ void microros_loop()
       break;
 
     case AGENT_CONNECTED:
-      EXECUTE_EVERY_N_MS(200, state = (RMW_RET_OK == rmw_uros_ping_agent(100, 1)) ? AGENT_CONNECTED : AGENT_DISCONNECTED;);
+      EXECUTE_EVERY_N_MS(200, state = (RMW_RET_OK == rmw_uros_ping_agent(100, 8)) ? AGENT_CONNECTED : AGENT_DISCONNECTED;);
       if (state == AGENT_CONNECTED) {
         rclc_executor_spin_some(&executor, RCL_MS_TO_NS(1));
       }

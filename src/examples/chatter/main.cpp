@@ -22,10 +22,10 @@ Steps:
 
   Terminal3:
     # Turn down the LED low
-    ros2 topic pub /micro_ros_subcriber std_msgs/msg/Booñ data:\ false\
+    ros2 topic pub /micro_ros_subscriber std_msgs/msg/Bool data:\ false\
   
     # Turn down the LED high
-    ros2 topic pub /micro_ros_subcriber std_msgs/msg/Bool data:\ true\
+    ros2 topic pub /micro_ros_subscriber std_msgs/msg/Bool data:\ true\
 reference:
   micro_ros_platformio: https://github.com/micro-ROS/micro_ros_platformio
   micro_ros_agent: https://micro.ros.org/docs/tutorials/core/first_application_rtos/freertos/
